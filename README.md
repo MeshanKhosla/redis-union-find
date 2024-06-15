@@ -1,6 +1,6 @@
-# redis-disjoint-set
+# redis-union-find
 
-This is an implementation of the [Disjoint set](https://cs61b-2.gitbook.io/cs61b-textbook/14.-disjoint-sets) data structure using Redis. It implements WeightedQuickUnion with path compression.
+This is an implementation of the [Union Find/Disjoint Set](https://cs61b-2.gitbook.io/cs61b-textbook/14.-disjoint-sets) data structure using Redis. It implements WeightedQuickUnion with path compression.
 
 ## Why?
 I think Disjoint Sets are really cool.
