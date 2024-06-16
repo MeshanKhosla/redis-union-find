@@ -42,7 +42,7 @@ export class UnionFind {
    */
   private async findRoot(node: string): Promise<string> {
     let curNode = node;
-		const toCompress = [];
+    const toCompress = [];
 
     while (true) {
       const curNodeKey = this.getRedisKey(curNode);
@@ -54,17 +54,21 @@ export class UnionFind {
         break;
       }
 
-			toCompress.push(curNode);
+      toCompress.push(curNode);
       curNode = parent;
     }
 
-		// Compress the path by setting the parent of all nodes in the path to the root
-		await Promise.all(toCompress.map(node => {
-			const nodeKey = this.getRedisKey(node);
-			return this.redis.hset(nodeKey, {
-				parent: curNode
-			});
-		}));
+    // Compress the path by setting the parent of all nodes in the path to the root
+    if (toCompress.length > 0) {
+      const pipeline = this.redis.pipeline();
+      for (const node of toCompress) {
+        const nodeKey = this.getRedisKey(node);
+        pipeline.hset(nodeKey, {
+          parent: curNode,
+        });
+      }
+      await pipeline.exec();
+    }
 
     return curNode;
   }
@@ -128,7 +132,10 @@ export class UnionFind {
   /**
    * Returns whether the two nodes are connected
    */
-  public async areConnected(nodeOne: string, nodeTwo: string): Promise<boolean> {
+  public async areConnected(
+    nodeOne: string,
+    nodeTwo: string
+  ): Promise<boolean> {
     try {
       const [nodeOneRoot, nodeTwoRoot] = await Promise.all([
         this.findRoot(nodeOne),
