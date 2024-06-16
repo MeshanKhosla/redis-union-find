@@ -1,3 +1,5 @@
+import type { Redis } from "@upstash/redis";
+
 /**
  * UnionFind implementation, WeightedQuickUnion with Path Compression
  * 
@@ -11,31 +13,37 @@
  * wqu.isConnected("Alice", "Eve"); -> true
  */
 export class UnionFind {
+	private redis: Redis;
+
+	constructor(config: { redis: Redis }) {
+		this.redis = config.redis
+	}
+
 	/**
 	 * Connects the two nodes together
 	 */
-	public connect(nodeOne: string, nodeTwo: string) {
+	public async connect(nodeOne: string, nodeTwo: string) {
 
 	}
 
 	/**
 	 * Returns whether the two nodes are connected 
 	 */
-	public isConnected(nodeOne: string, nodeTwo: string) : boolean {
+	public async isConnected(nodeOne: string, nodeTwo: string) : Promise<boolean> {
 		return true;
 	}
 
 	/**
 	 * Returns all nodes added to the disjoint set 
 	 */
-	public getNodes() : string[] {
+	public async getNodes() : Promise<string[]> {
 		return []
 	}
 
 	/** 
 	 * Removes all nodes from the disjoint set
 	 */
-	public clear() {
+	public async clear() {
 
 	}
 
