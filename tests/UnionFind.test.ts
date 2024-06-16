@@ -1,14 +1,16 @@
-import { expect, test } from "bun:test";
+import { expect, test, afterEach } from "bun:test";
 import { UnionFind } from "../UnionFind";
 
 const REDIS_URL = process.env.REDIS_URL!;
 const REDIS_TOKEN = process.env.REDIS_TOKEN!;
 
-test.only("Test", async () => {
+afterEach(async () => {
   const uf = new UnionFind({
     redisUrl: REDIS_URL,
     redisToken: REDIS_TOKEN,
   });
+
+  await uf.clear();
 });
 
 test("Connect Alice and Bob", async () => {

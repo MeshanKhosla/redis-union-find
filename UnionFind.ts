@@ -84,6 +84,35 @@ export class UnionFind {
       [this.getRedisKey(nodeOne), this.getRedisKey(nodeTwo), nodeOne, nodeTwo],
       []
     );
+
+    const [nodeOneRoot, nodeTwoRoot] = await Promise.all([
+      this.findRoot(nodeOne),
+      this.findRoot(nodeTwo),
+    ]);
+
+    if (nodeOneRoot === nodeTwoRoot) {
+      return;
+    }
+
+    const [setOneSize, setTwoSize] = await Promise.all([
+      this.redis.hget<number>(this.getRedisKey(nodeOneRoot), "size"),
+      this.redis.hget<number>(this.getRedisKey(nodeTwoRoot), "size"),
+    ]);
+
+    if (setOneSize == null || setTwoSize == null) {
+      throw new Error(`Size of ${nodeOneRoot} or ${nodeTwoRoot} not found`);
+    }
+
+    // Make smaller set a child of the bigger set
+    let smallerSet = setOneSize < setTwoSize ? nodeOneRoot : nodeTwoRoot;
+    let biggerSet = setOneSize < setTwoSize ? nodeTwoRoot : nodeOneRoot;
+
+    await this.redis.hset(this.getRedisKey(smallerSet), {
+      parent: biggerSet,
+    });
+    await this.redis.hset(this.getRedisKey(biggerSet), {
+      size: setOneSize + setTwoSize,
+    });
   }
 
   /**
