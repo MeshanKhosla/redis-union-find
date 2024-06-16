@@ -68,7 +68,12 @@ export class UnionFind {
    * Returns whether the two nodes are connected
    */
   public async isConnected(nodeOne: string, nodeTwo: string): Promise<boolean> {
-    return true;
+    const [nodeOneRoot, nodeTwoRoot] = await Promise.all([
+      this.findRoot(nodeOne),
+      this.findRoot(nodeTwo),
+    ]);
+
+    return nodeOneRoot === nodeTwoRoot;
   }
 
   /**
