@@ -21,10 +21,10 @@ test("Connect Alice and Bob", async () => {
 
   await uf.connect("Alice", "Bob");
 
-  const aliceBobConnected = await uf.isConnected("Alice", "Bob");
+  const aliceBobConnected = await uf.areConnected("Alice", "Bob");
   expect(aliceBobConnected).toBeTrue;
 
-  const aliceEveConnected = await uf.isConnected("Alice", "Eve");
+  const aliceEveConnected = await uf.areConnected("Alice", "Eve");
   expect(aliceEveConnected).toBeFalse;
 });
 
@@ -38,22 +38,22 @@ test("Connect Alice and Bob, Dave and Eve, Eve and Alice", async () => {
   await uf.connect("Dave", "Eve");
   await uf.connect("Eve", "Alice");
 
-  const aliceBobConnected = await uf.isConnected("Alice", "Bob");
+  const aliceBobConnected = await uf.areConnected("Alice", "Bob");
   expect(aliceBobConnected).toBeTrue;
 
-  const daveEveConnected = await uf.isConnected("Dave", "Eve");
+  const daveEveConnected = await uf.areConnected("Dave", "Eve");
   expect(daveEveConnected).toBeTrue;
 
-  const aliceEveConnected = await uf.isConnected("Alice", "Eve");
+  const aliceEveConnected = await uf.areConnected("Alice", "Eve");
   expect(aliceEveConnected).toBeTrue;
 
-  const aliceDaveConnected = await uf.isConnected("Alice", "Dave");
+  const aliceDaveConnected = await uf.areConnected("Alice", "Dave");
   expect(aliceDaveConnected).toBeTrue;
 
-  const bobDaveConnected = await uf.isConnected("Bob", "Dave");
+  const bobDaveConnected = await uf.areConnected("Bob", "Dave");
   expect(bobDaveConnected).toBeTrue;
 
-  const bobEveConnected = await uf.isConnected("Bob", "Eve");
+  const bobEveConnected = await uf.areConnected("Bob", "Eve");
   expect(bobEveConnected).toBeTrue;
 });
 

@@ -7,10 +7,10 @@ import { Redis } from "@upstash/redis";
  *
  * wqu.connect("Alice", "Bob");
  * wqu.connect("Dave", "Eve");
- * wqu.isConnected("Alice", "Bob"); -> true
- * wqu.isConnected("Alice", "Eve"); -> false
+ * wqu.areConnected("Alice", "Bob"); -> true
+ * wqu.areConnected("Alice", "Eve"); -> false
  * wqu.connect("Alice", "Eve");
- * wqu.isConnected("Alice", "Eve"); -> true
+ * wqu.areConnected("Alice", "Eve"); -> true
  */
 export class UnionFind {
   private redis: Redis;
@@ -118,7 +118,7 @@ export class UnionFind {
   /**
    * Returns whether the two nodes are connected
    */
-  public async isConnected(nodeOne: string, nodeTwo: string): Promise<boolean> {
+  public async areConnected(nodeOne: string, nodeTwo: string): Promise<boolean> {
     try {
       const [nodeOneRoot, nodeTwoRoot] = await Promise.all([
         this.findRoot(nodeOne),
