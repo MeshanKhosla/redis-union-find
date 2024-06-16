@@ -42,6 +42,7 @@ export class UnionFind {
    */
   private async findRoot(node: string): Promise<string> {
     let curNode = node;
+		const toCompress = [];
 
     while (true) {
       const curNodeKey = this.getRedisKey(curNode);
@@ -53,8 +54,17 @@ export class UnionFind {
         break;
       }
 
+			toCompress.push(curNode);
       curNode = parent;
     }
+
+		// Compress the path by setting the parent of all nodes in the path to the root
+		await Promise.all(toCompress.map(node => {
+			const nodeKey = this.getRedisKey(node);
+			return this.redis.hset(nodeKey, {
+				parent: curNode
+			});
+		}));
 
     return curNode;
   }
