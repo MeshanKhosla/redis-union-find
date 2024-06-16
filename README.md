@@ -6,6 +6,6 @@ This is an implementation of the [Union Find/Disjoint Set](https://cs61b-2.gitbo
 I think Disjoint Sets are really cool. I also think Redis is very cool.
 
 ## Overview of Disjoint Sets
-todo
+todo - Blog?
 
 Made using Bun and Upstash Redis

@@ -1,4 +1,4 @@
-import type { Redis } from "@upstash/redis";
+import { Redis } from "@upstash/redis";
 
 /**
  * UnionFind implementation, WeightedQuickUnion with Path Compression
@@ -15,14 +15,35 @@ import type { Redis } from "@upstash/redis";
 export class UnionFind {
 	private redis: Redis;
 
-	constructor(config: { redis: Redis }) {
-		this.redis = config.redis
+	constructor(config: { redis_url: string, redis_token: string }) {
+		this.redis = new Redis({
+			url: config.redis_url,
+			token: config.redis_token,
+			enableAutoPipelining: true
+		})
 	}
 
 	/**
 	 * Connects the two nodes together
 	 */
 	public async connect(nodeOne: string, nodeTwo: string) {
+		// If either node is not in Redis yet, add it
+		const addNodesScript = `
+			local nodeOne = redis.call("HGETALL", KEYS[1])
+			local nodeTwo = redis.call("HGETALL", KEYS[2])
+			
+			if #nodeOne == 0 then
+				redis.call("HSET", KEYS[1], "parent", KEYS[1])
+				redis.call("HSET", KEYS[1], "size", 1)
+			end
+
+			if #nodeTwo == 0 then
+				redis.call("HSET", KEYS[2], "parent", KEYS[2])
+				redis.call("HSET", KEYS[2], "size", 1)
+			end
+		`
+
+		await this.redis.eval(addNodesScript,  [nodeOne, nodeTwo], [])
 
 	}
 

@@ -1,10 +1,22 @@
 import { expect, test } from "bun:test"
 import { UnionFind } from "../UnionFind"
-import { Redis } from "@upstash/redis"
+
+const REDIS_URL = process.env.REDIS_URL!
+const REDIS_TOKEN = process.env.REDIS_TOKEN!
+
+test.only("Test connect Alice bob", async () => {
+	const uf = new UnionFind({
+		redis_url: REDIS_URL,
+		redis_token: REDIS_TOKEN,
+	})
+
+	await uf.connect("Alice", "Bob")
+})
 
 test("Connect Alice and Bob", async () => {
 	const uf = new UnionFind({
-		redis: Redis.fromEnv()
+		redis_url: REDIS_URL,
+		redis_token: REDIS_TOKEN,
 	})
 
 	await uf.connect("Alice", "Bob")
@@ -18,7 +30,8 @@ test("Connect Alice and Bob", async () => {
 
 test("Connect Alice and Bob, Dave and Eve, Eve and Alice", async () => {
 	const uf = new UnionFind({
-		redis: Redis.fromEnv()
+		redis_url: REDIS_URL,
+		redis_token: REDIS_TOKEN,
 	})
 
 	await uf.connect("Alice", "Bob")
@@ -46,7 +59,8 @@ test("Connect Alice and Bob, Dave and Eve, Eve and Alice", async () => {
 
 test("Get all nodes", async () => {
 	const uf = new UnionFind({
-		redis: Redis.fromEnv()
+		redis_url: REDIS_URL,
+		redis_token: REDIS_TOKEN,
 	})
 
 	await uf.connect("Alice", "Bob")
@@ -62,7 +76,8 @@ test("Get all nodes", async () => {
 
 test("Clear all nodes", async () => {
 	const uf = new UnionFind({
-		redis: Redis.fromEnv()
+		redis_url: REDIS_URL,
+		redis_token: REDIS_TOKEN,
 	})
 
 	await uf.connect("Alice", "Bob")
