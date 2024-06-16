@@ -1,90 +1,90 @@
-import { expect, test } from "bun:test"
-import { UnionFind } from "../UnionFind"
+import { expect, test } from "bun:test";
+import { UnionFind } from "../UnionFind";
 
-const REDIS_URL = process.env.REDIS_URL!
-const REDIS_TOKEN = process.env.REDIS_TOKEN!
+const REDIS_URL = process.env.REDIS_URL!;
+const REDIS_TOKEN = process.env.REDIS_TOKEN!;
 
 test.only("Test connect Alice bob", async () => {
-	const uf = new UnionFind({
-		redis_url: REDIS_URL,
-		redis_token: REDIS_TOKEN,
-	})
+  const uf = new UnionFind({
+    redis_url: REDIS_URL,
+    redis_token: REDIS_TOKEN,
+  });
 
-	await uf.connect("Alice", "Bob")
-})
+  await uf.connect("Alice", "Bob");
+});
 
 test("Connect Alice and Bob", async () => {
-	const uf = new UnionFind({
-		redis_url: REDIS_URL,
-		redis_token: REDIS_TOKEN,
-	})
+  const uf = new UnionFind({
+    redis_url: REDIS_URL,
+    redis_token: REDIS_TOKEN,
+  });
 
-	await uf.connect("Alice", "Bob")
-	
-	const aliceBobConnected = await uf.isConnected("Alice", "Bob")
-	expect(aliceBobConnected).toBeTrue
+  await uf.connect("Alice", "Bob");
 
-	const aliceEveConnected = await uf.isConnected("Alice", "Eve")
-	expect(aliceEveConnected).toBeFalse
-})
+  const aliceBobConnected = await uf.isConnected("Alice", "Bob");
+  expect(aliceBobConnected).toBeTrue;
+
+  const aliceEveConnected = await uf.isConnected("Alice", "Eve");
+  expect(aliceEveConnected).toBeFalse;
+});
 
 test("Connect Alice and Bob, Dave and Eve, Eve and Alice", async () => {
-	const uf = new UnionFind({
-		redis_url: REDIS_URL,
-		redis_token: REDIS_TOKEN,
-	})
+  const uf = new UnionFind({
+    redis_url: REDIS_URL,
+    redis_token: REDIS_TOKEN,
+  });
 
-	await uf.connect("Alice", "Bob")
-	await uf.connect("Dave", "Eve")
-	await uf.connect("Eve", "Alice")	
+  await uf.connect("Alice", "Bob");
+  await uf.connect("Dave", "Eve");
+  await uf.connect("Eve", "Alice");
 
-	const aliceBobConnected = await uf.isConnected("Alice", "Bob")
-	expect(aliceBobConnected).toBeTrue
+  const aliceBobConnected = await uf.isConnected("Alice", "Bob");
+  expect(aliceBobConnected).toBeTrue;
 
-	const daveEveConnected = await uf.isConnected("Dave", "Eve")
-	expect(daveEveConnected).toBeTrue
+  const daveEveConnected = await uf.isConnected("Dave", "Eve");
+  expect(daveEveConnected).toBeTrue;
 
-	const aliceEveConnected = await uf.isConnected("Alice", "Eve")
-	expect(aliceEveConnected).toBeTrue
+  const aliceEveConnected = await uf.isConnected("Alice", "Eve");
+  expect(aliceEveConnected).toBeTrue;
 
-	const aliceDaveConnected = await uf.isConnected("Alice", "Dave")
-	expect(aliceDaveConnected).toBeTrue
+  const aliceDaveConnected = await uf.isConnected("Alice", "Dave");
+  expect(aliceDaveConnected).toBeTrue;
 
-	const bobDaveConnected = await uf.isConnected("Bob", "Dave")
-	expect(bobDaveConnected).toBeTrue
+  const bobDaveConnected = await uf.isConnected("Bob", "Dave");
+  expect(bobDaveConnected).toBeTrue;
 
-	const bobEveConnected = await uf.isConnected("Bob", "Eve")
-	expect(bobEveConnected).toBeTrue
-})
+  const bobEveConnected = await uf.isConnected("Bob", "Eve");
+  expect(bobEveConnected).toBeTrue;
+});
 
 test("Get all nodes", async () => {
-	const uf = new UnionFind({
-		redis_url: REDIS_URL,
-		redis_token: REDIS_TOKEN,
-	})
+  const uf = new UnionFind({
+    redis_url: REDIS_URL,
+    redis_token: REDIS_TOKEN,
+  });
 
-	await uf.connect("Alice", "Bob")
-	await uf.connect("Dave", "Eve")
+  await uf.connect("Alice", "Bob");
+  await uf.connect("Dave", "Eve");
 
-	const nodes = await uf.getNodes()
-	expect(nodes.length).toBe(4)
-	expect(nodes).toContain("Alice")
-	expect(nodes).toContain("Bob")
-	expect(nodes).toContain("Dave")
-	expect(nodes).toContain("Eve")
-})
+  const nodes = await uf.getNodes();
+  expect(nodes.length).toBe(4);
+  expect(nodes).toContain("Alice");
+  expect(nodes).toContain("Bob");
+  expect(nodes).toContain("Dave");
+  expect(nodes).toContain("Eve");
+});
 
 test("Clear all nodes", async () => {
-	const uf = new UnionFind({
-		redis_url: REDIS_URL,
-		redis_token: REDIS_TOKEN,
-	})
+  const uf = new UnionFind({
+    redis_url: REDIS_URL,
+    redis_token: REDIS_TOKEN,
+  });
 
-	await uf.connect("Alice", "Bob")
-	await uf.connect("Dave", "Eve")
+  await uf.connect("Alice", "Bob");
+  await uf.connect("Dave", "Eve");
 
-	await uf.clear()
+  await uf.clear();
 
-	const nodes = await uf.getNodes()
-	expect(nodes.length).toBe(0)
-})
+  const nodes = await uf.getNodes();
+  expect(nodes.length).toBe(0);
+});
