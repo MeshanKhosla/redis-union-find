@@ -22,10 +22,10 @@ test("Connect Alice and Bob", async () => {
   await uf.connect("Alice", "Bob");
 
   const aliceBobConnected = await uf.areConnected("Alice", "Bob");
-  expect(aliceBobConnected).toBeTrue;
+  expect(aliceBobConnected).toBeTrue();
 
   const aliceEveConnected = await uf.areConnected("Alice", "Eve");
-  expect(aliceEveConnected).toBeFalse;
+  expect(aliceEveConnected).toBeFalse();
 });
 
 test("Connect Alice and Bob, Dave and Eve, Eve and Alice", async () => {
@@ -39,22 +39,51 @@ test("Connect Alice and Bob, Dave and Eve, Eve and Alice", async () => {
   await uf.connect("Eve", "Alice");
 
   const aliceBobConnected = await uf.areConnected("Alice", "Bob");
-  expect(aliceBobConnected).toBeTrue;
+  expect(aliceBobConnected).toBeTrue();
 
   const daveEveConnected = await uf.areConnected("Dave", "Eve");
-  expect(daveEveConnected).toBeTrue;
+  expect(daveEveConnected).toBeTrue();
 
   const aliceEveConnected = await uf.areConnected("Alice", "Eve");
-  expect(aliceEveConnected).toBeTrue;
+  expect(aliceEveConnected).toBeTrue();
 
   const aliceDaveConnected = await uf.areConnected("Alice", "Dave");
-  expect(aliceDaveConnected).toBeTrue;
+  expect(aliceDaveConnected).toBeTrue();
 
   const bobDaveConnected = await uf.areConnected("Bob", "Dave");
-  expect(bobDaveConnected).toBeTrue;
+  expect(bobDaveConnected).toBeTrue();
 
   const bobEveConnected = await uf.areConnected("Bob", "Eve");
-  expect(bobEveConnected).toBeTrue;
+  expect(bobEveConnected).toBeTrue();
+});
+
+test("Many connections", async () => {
+	const uf = new UnionFind({
+		redisUrl: REDIS_URL,
+		redisToken: REDIS_TOKEN,
+	});
+
+	await uf.connect("Alice", "Bob");
+	await uf.connect("Dave", "Eve");
+	await uf.connect("Eve", "Alice");
+	await uf.connect("Alice", "Bob");
+	await uf.connect("Dave", "Eve");
+	await uf.connect("Eve", "Alice");
+	
+	const aliceBobConnected = await uf.areConnected("Alice", "Bob");
+	expect(aliceBobConnected).toBeTrue();
+
+	const daveEveConnected = await uf.areConnected("Dave", "Eve");
+	expect(daveEveConnected).toBeTrue();
+
+	const aliceEveConnected = await uf.areConnected("Alice", "Eve");
+	expect(aliceEveConnected).toBeTrue();
+
+	const aliceDaveConnected = await uf.areConnected("Alice", "Dave");
+	expect(aliceDaveConnected).toBeTrue();
+
+	const bobDaveConnected = await uf.areConnected("Bob", "Dave");
+	expect(bobDaveConnected).toBeTrue();
 });
 
 test("Get all nodes", async () => {

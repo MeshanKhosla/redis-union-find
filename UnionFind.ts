@@ -24,7 +24,6 @@ export class UnionFind {
     this.redis = new Redis({
       url: config.redisUrl,
       token: config.redisToken,
-      enableAutoPipelining: true,
     });
 
     this.redisPrefix = config.redisPrefix || "!!unionfind!!--";
