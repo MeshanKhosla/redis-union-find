@@ -14,20 +14,38 @@ import { Redis } from "@upstash/redis";
  */
 export class UnionFind {
   private redis: Redis;
+  private redisPrefix: string;
 
-  constructor(config: { redis_url: string; redis_token: string }) {
+  constructor(config: {
+    redisUrl: string;
+    redisToken: string;
+    redisPrefix?: string;
+  }) {
     this.redis = new Redis({
-      url: config.redis_url,
-      token: config.redis_token,
+      url: config.redisUrl,
+      token: config.redisToken,
       enableAutoPipelining: true,
     });
+
+    this.redisPrefix = config.redisPrefix || "!!unionfind!!--";
   }
 
+  /**
+   * Returns the Redis key for the given node
+   */
+  private getRedisKey(node: string) {
+    return `${this.redisPrefix}${node}`;
+  }
+
+  /**
+   * Finds the root node of the given node
+   */
   private async findRoot(node: string): Promise<string> {
     let curNode = node;
 
     while (true) {
-      const parent = await this.redis.hget<string>(curNode, "parent");
+      const curNodeKey = this.getRedisKey(curNode);
+      const parent = await this.redis.hget<string>(curNodeKey, "parent");
       if (parent == null) {
         throw new Error(`No parent found for ${curNode}`);
       }
@@ -51,40 +69,56 @@ export class UnionFind {
 			local nodeTwo = redis.call("HGETALL", KEYS[2])
 
 			if #nodeOne == 0 then
-				redis.call("HSET", KEYS[1], "parent", KEYS[1])
+				redis.call("HSET", KEYS[1], "parent", KEYS[3])
 				redis.call("HSET", KEYS[1], "size", 1)
 			end
 
 			if #nodeTwo == 0 then
-				redis.call("HSET", KEYS[2], "parent", KEYS[2])
+				redis.call("HSET", KEYS[2], "parent", KEYS[4])
 				redis.call("HSET", KEYS[2], "size", 1)
 			end
 		`;
 
-    await this.redis.eval(addNodesScript, [nodeOne, nodeTwo], []);
+    await this.redis.eval(
+      addNodesScript,
+      [this.getRedisKey(nodeOne), this.getRedisKey(nodeTwo), nodeOne, nodeTwo],
+      []
+    );
   }
 
   /**
    * Returns whether the two nodes are connected
    */
   public async isConnected(nodeOne: string, nodeTwo: string): Promise<boolean> {
-    const [nodeOneRoot, nodeTwoRoot] = await Promise.all([
-      this.findRoot(nodeOne),
-      this.findRoot(nodeTwo),
-    ]);
+    try {
+      const [nodeOneRoot, nodeTwoRoot] = await Promise.all([
+        this.findRoot(nodeOne),
+        this.findRoot(nodeTwo),
+      ]);
 
-    return nodeOneRoot === nodeTwoRoot;
+      return nodeOneRoot === nodeTwoRoot;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  private async getAllNodeKeys() {
+    return await this.redis.keys(`${this.redisPrefix}*`);
   }
 
   /**
    * Returns all nodes added to the disjoint set
    */
-  public async getNodes(): Promise<string[]> {
-    return [];
+  public async getAllNodes(): Promise<string[]> {
+    const nodeKeys = await this.getAllNodeKeys();
+    return nodeKeys.map(nodeKey => nodeKey.slice(this.redisPrefix.length));
   }
 
   /**
    * Removes all nodes from the disjoint set
    */
-  public async clear() {}
+  public async clear() {
+    const nodes = await this.getAllNodeKeys();
+    await Promise.all(nodes.map(node => this.redis.del(node)));
+  }
 }

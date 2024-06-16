@@ -4,19 +4,17 @@ import { UnionFind } from "../UnionFind";
 const REDIS_URL = process.env.REDIS_URL!;
 const REDIS_TOKEN = process.env.REDIS_TOKEN!;
 
-test.only("Test connect Alice bob", async () => {
+test.only("Test", async () => {
   const uf = new UnionFind({
-    redis_url: REDIS_URL,
-    redis_token: REDIS_TOKEN,
+    redisUrl: REDIS_URL,
+    redisToken: REDIS_TOKEN,
   });
-
-  await uf.connect("Alice", "Bob");
 });
 
 test("Connect Alice and Bob", async () => {
   const uf = new UnionFind({
-    redis_url: REDIS_URL,
-    redis_token: REDIS_TOKEN,
+    redisUrl: REDIS_URL,
+    redisToken: REDIS_TOKEN,
   });
 
   await uf.connect("Alice", "Bob");
@@ -30,8 +28,8 @@ test("Connect Alice and Bob", async () => {
 
 test("Connect Alice and Bob, Dave and Eve, Eve and Alice", async () => {
   const uf = new UnionFind({
-    redis_url: REDIS_URL,
-    redis_token: REDIS_TOKEN,
+    redisUrl: REDIS_URL,
+    redisToken: REDIS_TOKEN,
   });
 
   await uf.connect("Alice", "Bob");
@@ -59,14 +57,14 @@ test("Connect Alice and Bob, Dave and Eve, Eve and Alice", async () => {
 
 test("Get all nodes", async () => {
   const uf = new UnionFind({
-    redis_url: REDIS_URL,
-    redis_token: REDIS_TOKEN,
+    redisUrl: REDIS_URL,
+    redisToken: REDIS_TOKEN,
   });
 
   await uf.connect("Alice", "Bob");
   await uf.connect("Dave", "Eve");
 
-  const nodes = await uf.getNodes();
+  const nodes = await uf.getAllNodes();
   expect(nodes.length).toBe(4);
   expect(nodes).toContain("Alice");
   expect(nodes).toContain("Bob");
@@ -76,8 +74,8 @@ test("Get all nodes", async () => {
 
 test("Clear all nodes", async () => {
   const uf = new UnionFind({
-    redis_url: REDIS_URL,
-    redis_token: REDIS_TOKEN,
+    redisUrl: REDIS_URL,
+    redisToken: REDIS_TOKEN,
   });
 
   await uf.connect("Alice", "Bob");
@@ -85,6 +83,6 @@ test("Clear all nodes", async () => {
 
   await uf.clear();
 
-  const nodes = await uf.getNodes();
+  const nodes = await uf.getAllNodes();
   expect(nodes.length).toBe(0);
 });
