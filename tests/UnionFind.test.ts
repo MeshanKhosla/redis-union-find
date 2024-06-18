@@ -1,5 +1,5 @@
 import { expect, test, afterEach } from "bun:test";
-import { UnionFind } from "../UnionFind";
+import { UnionFind } from "../src/UnionFind";
 
 const REDIS_URL = process.env.REDIS_URL!;
 const REDIS_TOKEN = process.env.REDIS_TOKEN!;

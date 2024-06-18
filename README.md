@@ -12,3 +12,24 @@ Read my [blog post](https://meshan.dev/blog/redis-union-find/)!
 
 ---
 Made using Bun and Upstash Redis
+
+I've also published to npm, and you can install it in your project using
+
+```
+npm install redis-union-find
+```
+or
+```
+bun add redis-union-find
+```
+
+and use it like this:
+
+```typescript
+const uf = new UnionFind({
+  redisToken: process.env.REDIS_TOKEN!,
+  redisUrl: process.env.REDIS_URL!,
+})
+
+await uf.connect("Alice", "Bob")
+```
