@@ -10,4 +10,5 @@ I think Disjoint Sets are really cool. I also think Redis is very cool.
 ## Overview of Disjoint Sets
 Read my [blog post](https://meshan.dev/blog/redis-union-find/)!
 
+---
 Made using Bun and Upstash Redis
