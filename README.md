@@ -8,6 +8,6 @@ This project implements WeightedQuickUnion with Path Compression.
 I think Disjoint Sets are really cool. I also think Redis is very cool.
 
 ## Overview of Disjoint Sets
-I'm working on a blog
+Read my [blog post](https://meshan.dev/blog/redis-union-find/)!
 
 Made using Bun and Upstash Redis
